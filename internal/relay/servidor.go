@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
+	_ "embed"
 	"encoding/hex"
 	"encoding/json"
 	"io"
@@ -14,6 +15,9 @@ import (
 	"sync"
 	"time"
 )
+
+//go:embed landing.html
+var paginaLanding []byte
 
 var reIDValido = regexp.MustCompile(`^[A-Za-z0-9_-]{4,64}$`)
 
@@ -55,9 +59,14 @@ func NovoServidor(apns *ClienteAPNs) *Servidor {
 	}
 }
 
-// Handler devolve as rotas HTTP/WebSocket do Relay.
+// Handler devolve as rotas HTTP/WebSocket do Relay e a landing page em GET /.
 func (s *Servidor) Handler() http.Handler {
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Header().Set("Cache-Control", "public, max-age=300")
+		w.Write(paginaLanding)
+	})
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(`{"ok":true,"service":"towerman-relay"}`))

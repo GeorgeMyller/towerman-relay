@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Towerman — Torre de Controle para Agentes de IA no Mac, iPhone e Apple Watch</title>
+<meta name="description" content="Monitore, aprove permissões e responda ao Claude Code, Codex e Antigravity direto do Mac, do iPhone e do pulso no Apple Watch com criptografia ponta a ponta.">
+<style>
+:root {
+  --ground: #0b1626;
+  --panel: #12223a;
+  --raised: #1a2e4a;
+  --line: #26405f;
+  --text: #e3ebf5;
+  --soft: #8ea3c0;
+  --amber: #ffb547;
+  --on-amber: #1a1205;
+  --green: #5bbf8a;
+  --red: #f0645a;
+  --blue: #5aa9ff;
+  --parked: #6f7f99;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --gutter: clamp(16px, 4vw, 48px);
+}
+* { box-sizing: border-box; }
+html {
+  background: var(--ground);
+  color: var(--text);
+  scroll-behavior: smooth;
+  scrollbar-color: var(--line) var(--ground);
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ground);
+  color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, sans-serif;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: var(--on-amber); }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+a { color: var(--blue); text-underline-offset: 4px; }
+button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
+code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Barra de topo da Torre */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px var(--gutter);
+  background: rgba(11, 22, 38, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+}
+.brand svg { width: 24px; height: 24px; flex: none; }
+.relay-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+.relay-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: border-color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
+}
+.btn:hover { border-color: var(--blue); }
+.btn.amber {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--on-amber);
+}
+.btn.amber:hover { background: #ffc164; border-color: #ffc164; }
+
+/* Estrutura principal */
+.wrap {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* Primeira dobra: Proposta + Simulador Interativo da Torre */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+  padding: clamp(36px, 6vw, 76px) 0 clamp(48px, 7vw, 88px);
+  border-bottom: 1px solid var(--line);
+}
+@media (max-width: 980px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+}
+.hero h1 {
+  margin: 0 0 18px;
+  font-size: clamp(2.15rem, 4.2vw, 3.65rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--amber);
+}
+.lead {
+  margin: 0 0 26px;
+  font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+  color: var(--soft);
+  max-width: 62ch;
+}
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.hero-ctas .btn { min-height: 46px; padding: 10px 20px; font-size: 15px; }
+
+/* Caixa de instalação rápida no terminal */
+.install-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  max-width: 620px;
+}
+.install-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--soft);
+}
+.copy-btn {
+  background: var(--raised);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.copy-btn:hover { border-color: var(--blue); }
+.install-cmd {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text);
+  overflow-x: auto;
+  white-space: pre;
+  padding: 4px 0;
+}
+.install-cmd span.hl { color: var(--amber); }
+
+/* Legenda das formas dos agentes */
+.shapes-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+  color: var(--soft);
+}
+.shape-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.shape-item svg { width: 13px; height: 13px; flex: none; }
+
+/* Painel interativo da Torre (Radar + Faixa Âmbar + Quadro de Partidas) */
+.console {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 24px 48px rgba(4, 10, 20, 0.55);
+}
+.console-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.device-tabs {
+  display: inline-flex;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 4px;
+}
+.device-tab {
+  border: 0;
+  background: transparent;
+  color: var(--soft);
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.device-tab[aria-selected="true"] {
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.leds {
+  display: flex;
+  gap: 8px;
+}
+.led {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-variant-numeric: tabular-nums;
+}
+.led b { font-size: 17px; color: var(--soft); }
+.led span { font-size: 11px; font-weight: 600; color: var(--soft); text-transform: uppercase; letter-spacing: 0.06em; }
+.led.amber.on { border-color: var(--amber); }
+.led.amber.on b { color: var(--amber); }
+.led.green.on b { color: var(--green); }
+.led.idle.on b { color: var(--text); }
+
+.console-body {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 16px;
+  align-items: center;
+}
+@media (max-width: 620px) {
+  .console-body { grid-template-columns: minmax(0, 1fr); }
+}
+.radar-box {
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px;
+  position: relative;
+}
+.radar-box svg {
+  width: 100%;
+  aspect-ratio: 1;
+  display: block;
+}
+.ring { fill: none; stroke: var(--line); stroke-width: 2; }
+.ring.wait { stroke: rgba(255, 181, 71, 0.55); stroke-dasharray: 6 8; }
+.sector { stroke: var(--line); stroke-width: 1.5; }
+.sweep { transform-origin: 150px 150px; animation: spin 7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.pulse-ring {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 2.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse 1.6s ease-out infinite;
+}
+@keyframes pulse {
+  from { transform: scale(1); opacity: 0.85; }
+  to { transform: scale(2.5); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sweep, .pulse-ring { animation: none; }
+}
+
+.live-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Faixa Âmbar de Pedido (contraste 11:1) */
+.amber-strip {
+  background: var(--amber);
+  color: var(--on-amber);
+  border-radius: 14px;
+  padding: 14px;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
+}
+.strip-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.provider-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(26, 18, 5, 0.5);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.amber-strip .cmd-box {
+  margin: 10px 0;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: rgba(26, 18, 5, 0.11);
+  font: 13px/1.4 var(--mono);
+  overflow-x: auto;
+}
+.strip-actions {
+  display: flex;
+  gap: 10px;
+}
+.act-btn {
+  min-height: 40px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 6px 14px;
+  border: 2px solid var(--on-amber);
+  background: transparent;
+  color: var(--on-amber);
+}
+.act-btn.primary {
+  flex: 1;
+  background: var(--on-amber);
+  color: var(--amber);
+}
+.act-btn:hover { opacity: 0.92; }
+
+/* Quadro de Partidas compacto */
+.departures {
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.dep-row {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13.5px;
+}
+.dep-row:last-child { border-bottom: 0; }
+.dep-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dep-sub {
+  color: var(--soft);
+  font-size: 12px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.state-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+.state-tag.wait { background: var(--amber); color: var(--on-amber); border-color: var(--amber); }
+.state-tag.run { color: var(--green); }
+.state-tag.idle { color: var(--soft); }
+
+/* Seção Arquitetura Zero-Knowledge e Economia de Cota */
+.section {
+  padding: clamp(44px, 6vw, 80px) 0;
+  border-bottom: 1px solid var(--line);
+}
+.section h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.65rem, 2.8vw, 2.35rem);
+  letter-spacing: -0.025em;
+}
+.section-lead {
+  margin: 0 0 36px;
+  color: var(--soft);
+  max-width: 68ch;
+  font-size: 1.05rem;
+}
+
+/* Fluxograma de rota inteligente (Em Casa vs Fora de Casa) */
+.route-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+.route-table th,
+.route-table td {
+  text-align: left;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.route-table th {
+  background: var(--raised);
+  color: var(--soft);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.route-table tr:last-child td { border-bottom: 0; }
+.route-table td code {
+  background: var(--ground);
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+}
+@media (max-width: 720px) {
+  .route-table, .route-table thead, .route-table tbody, .route-table tr, .route-table td {
+    display: block;
+  }
+  .route-table thead { display: none; }
+  .route-table tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .route-table td { border: 0; padding: 6px 14px; }
+}
+
+/* Demonstração dos 3 ecrãs (Mac, iPhone, Apple Watch) */
+.surfaces {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.9fr;
+  gap: 20px;
+  align-items: stretch;
+}
+@media (max-width: 960px) {
+  .surfaces { grid-template-columns: minmax(0, 1fr); }
+}
+.surface-pane {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+.surface-pane h3 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+}
+.surface-pane p {
+  margin: 0;
+  color: var(--soft);
+  font-size: 15px;
+}
+.surface-spec {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--soft);
+  font-family: var(--mono);
+}
+
+footer {
+  padding: 32px 0 48px;
+  color: var(--soft);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="#" class="brand">
+    <svg viewBox="0 0 28 28" aria-hidden="true">
+      <circle cx="14" cy="14" r="12" fill="none" stroke="#26405f" stroke-width="2"/>
+      <circle cx="14" cy="14" r="6.5" fill="none" stroke="#ffb547" stroke-width="1.8" stroke-dasharray="3 3"/>
+      <circle cx="14" cy="8" r="3" fill="#ffb547"/>
+      <rect x="17.5" y="15.5" width="5" height="5" rx="1.2" fill="#5bbf8a"/>
+    </svg>
+    <span>Towerman</span>
+  </a>
+
+  <div class="relay-pill" id="relay-status" aria-live="polite">
+    <span class="relay-dot" id="relay-dot"></span>
+    <span id="relay-text">Relay E2EE online · X25519 + AES-256-GCM</span>
+  </div>
+
+  <nav class="nav-actions" aria-label="Atalhos principais">
+    <a class="btn" href="#arquitetura">Arquitetura E2EE</a>
+    <a class="btn" href="#superficies">Mac · iPhone · Watch</a>
+    <a class="btn amber" href="#instalar">Instalar no Mac</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Seus agentes trabalham no Mac. <em>Você aprova do pulso.</em></h1>
+      <p class="lead">
+        O Towerman transforma sessões do Claude Code, do Codex e do Antigravity numa torre de controle noturna. Veja quem aguarda permissão, responda com toque duplo no Apple Watch e caminhe longe do computador com criptografia ponta a ponta.
+      </p>
+
+      <div class="hero-ctas" id="instalar">
+        <a class="btn amber" href="https://github.com/GeorgeMyller/towerman">Baixar para macOS e iOS</a>
+        <a class="btn" href="/health">Verificar JSON do Relay</a>
+      </div>
+
+      <div class="install-box">
+        <div class="install-head">
+          <span>Instale os hooks e pareie pelo QR Code no terminal:</span>
+          <button type="button" class="copy-btn" id="copy-btn">Copiar comando</button>
+        </div>
+        <pre class="install-cmd" id="cmd-text">go install github.com/GeorgeMyller/towerman/cmd/towerman@latest
+<span class="hl">towerman install</span> &amp;&amp; <span class="hl">towerman pair</span></pre>
+      </div>
+
+      <div class="shapes-bar" aria-label="Formas e agentes suportados">
+        <span class="shape-item">
+          <svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#5bbf8a"/></svg>
+          Círculo · Claude Code
+        </span>
+        <span class="shape-item">
+          <svg viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2.5" fill="#5aa9ff"/></svg>
+          Quadrado · Codex
+        </span>
+        <span class="shape-item">
+          <svg viewBox="0 0 14 14" aria-hidden="true"><polygon points="7,1 13,7 7,13 1,7" fill="#ffb547"/></svg>
+          Losango · Antigravity (agy &amp; IDE)
+        </span>
+      </div>
+    </div>
+
+    <!-- Simulador interativo ao vivo da Torre -->
+    <aside class="console" aria-label="Simulador interativo do Towerman">
+      <div class="console-top">
+        <div class="device-tabs" role="tablist" aria-label="Simular ação por dispositivo">
+          <button type="button" class="device-tab" role="tab" aria-selected="true" data-mode="iphone">iPhone</button>
+          <button type="button" class="device-tab" role="tab" aria-selected="false" data-mode="watch">Watch · Toque Duplo</button>
+          <button type="button" class="device-tab" role="tab" aria-selected="false" data-mode="mac">Mac</button>
+        </div>
+
+        <div class="leds">
+          <div class="led amber on" id="led-wait"><b id="cnt-wait">1</b><span>À espera</span></div>
+          <div class="led green on" id="led-run"><b id="cnt-run">2</b><span>Em curso</span></div>
+          <div class="led idle on"><b id="cnt-idle">1</b><span>Parados</span></div>
+        </div>
+      </div>
+
+      <div class="console-body">
+        <div class="radar-box">
+          <svg viewBox="0 0 300 300" role="img" aria-label="Radar de agentes em tempo real">
+            <defs>
+              <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#5aa9ff" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#5aa9ff" stop-opacity="0.22"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring" cx="150" cy="150" r="128"/>
+            <circle class="ring" cx="150" cy="150" r="92"/>
+            <circle class="ring wait" cx="150" cy="150" r="52"/>
+            <line class="sector" x1="150" y1="22" x2="150" y2="278"/>
+            <path class="sweep" d="M150,150 L150,22 A128,128 0 0,1 240,59 Z" fill="url(#sweepGrad)"/>
+
+            <!-- Ponto 1: Agente que pede permissão (muda do anel âmbar para o verde ao aprovar) -->
+            <g id="blip-main" transform="translate(150, 98)">
+              <circle class="pulse-ring" id="blip-pulse" cx="0" cy="0" r="8"/>
+              <polygon id="blip-shape" points="0,-8 8,0 0,8 -8,0" fill="#ffb547"/>
+            </g>
+
+            <!-- Ponto 2: Claude em curso -->
+            <g transform="translate(218, 185)">
+              <circle cx="0" cy="0" r="6.5" fill="#5bbf8a"/>
+            </g>
+
+            <!-- Ponto 3: Codex em curso -->
+            <g transform="translate(82, 178)">
+              <rect x="-6" y="-6" width="12" height="12" rx="2.5" fill="#5bbf8a"/>
+            </g>
+
+            <!-- Ponto 4: Sessão parada (oco) -->
+            <g transform="translate(112, 54)">
+              <circle cx="0" cy="0" r="6" fill="none" stroke="#6f7f99" stroke-width="2"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="live-stack">
+          <div class="amber-strip" id="prompt-strip">
+            <div class="strip-top">
+              <span id="strip-agent">agent-deck-apple · Mac Studio</span>
+              <span class="provider-tag" id="strip-provider">AG·IDE</span>
+            </div>
+            <div class="cmd-box" id="strip-cmd">go test ./internal/relay ./internal/servico</div>
+            <div class="strip-actions">
+              <button type="button" class="act-btn primary" id="btn-allow">Permitir (Toque Duplo)</button>
+              <button type="button" class="act-btn" id="btn-deny">Negar</button>
+            </div>
+          </div>
+
+          <div class="departures" aria-label="Quadro de partidas">
+            <div class="dep-row">
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                <polygon id="row-icon" points="7,1 13,7 7,13 1,7" fill="#ffb547"/>
+              </svg>
+              <div>
+                <span class="dep-title">agent-deck-apple</span>
+                <span class="dep-sub" id="row-detail">Bash? go test ./internal/relay</span>
+              </div>
+              <span class="state-tag wait" id="row-tag">Espera</span>
+            </div>
+            <div class="dep-row">
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                <circle cx="7" cy="7" r="5.5" fill="#5bbf8a"/>
+              </svg>
+              <div>
+                <span class="dep-title">towerman-core</span>
+                <span class="dep-sub">Edit · internal/servico/rede.go</span>
+              </div>
+              <span class="state-tag run">Em curso</span>
+            </div>
+            <div class="dep-row">
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                <rect x="2" y="2" width="10" height="10" rx="2" fill="#5bbf8a"/>
+              </svg>
+              <div>
+                <span class="dep-title">api-pagamentos</span>
+                <span class="dep-sub">Refatorando migrações SQL</span>
+              </div>
+              <span class="state-tag run">Em curso</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section" id="arquitetura">
+    <h2>Relay Zero-Knowledge com economia de 20x na bateria e na nuvem</h2>
+    <p class="section-lead">
+      Este servidor (<code>towerman-relay</code>) funciona como uma ponte cega em memória. No pareamento por QR Code na rede local, o Mac e o iPhone trocam chaves públicas <code>X25519</code>; cada pacote é selado com <code>AES-256-GCM</code> antes de sair do seu aparelho.
+    </p>
+
+    <table class="route-table">
+      <thead>
+        <tr>
+          <th>Cenário do Usuário</th>
+          <th>Caminho de Rede</th>
+          <th>Tráfego no Relay</th>
+          <th>Segurança</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Em casa / Escritório</strong></td>
+          <td>Direto via Bonjour (<code>_towerman._tcp</code>) ou Tailscale (<code>*.ts.net</code>)</td>
+          <td><code>0 bytes/s</code> (prioridade local automática)</td>
+          <td>Token SHA-256 em tempo constante no Keychain</td>
+        </tr>
+        <tr>
+          <td><strong>Fora de casa · Tela aberta</strong></td>
+          <td>WebSocket cifrado (<code>wss://…/s/{id}/ws</code>)</td>
+          <td>Apenas deltas quando o estado de um agente muda</td>
+          <td><code>X25519</code> + <code>HKDF-SHA256</code> + <code>AES-256-GCM</code></td>
+        </tr>
+        <tr>
+          <td><strong>Fora de casa · iPhone no bolso</strong></td>
+          <td>Sala em modo silencioso (<code>viewers == 0</code>)</td>
+          <td><code>0 bytes/s</code> até surgir um pedido <code>waiting</code></td>
+          <td>Acorda iPhone e Watch via Push APNs <code>ES256</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section" id="superficies">
+    <h2>Três telas desenhadas para não repetir o terminal</h2>
+    <p class="section-lead">
+      No pulso, você decide em dois segundos. No bolso, você lê o resumo e envia respostas rápidas. Na secretária, o aplicativo da barra de menus embute o servidor Go e abre a janela certa do IDE.
+    </p>
+
+    <div class="surfaces">
+      <article class="surface-pane">
+        <div>
+          <h3>Apple Watch · No pulso</h3>
+          <p>
+            A complicação no mostrador e o widget da Smart Stack mostram quantos agentes aguardam você. Quando um agente pede permissão, a faixa âmbar sobe ao topo e o gesto de <strong>toque duplo</strong> aprova a ação primária sem tocar na tela.
+          </p>
+        </div>
+        <div class="surface-spec">
+          <span>watchOS · App Intents</span>
+          <span>Smart Stack + Control Center</span>
+        </div>
+      </article>
+
+      <article class="surface-pane">
+        <div>
+          <h3>iPhone · Em movimento</h3>
+          <p>
+            A Dynamic Island e a Tela Bloqueada acompanham a sessão via Live Activities. Deslize uma linha para a direita para focar o terminal no Mac ou para a esquerda para enviar uma resposta rápida à fila da sessão.
+          </p>
+        </div>
+        <div class="surface-spec">
+          <span>iOS · Live Activities</span>
+          <span>Keychain + CryptoKit</span>
+        </div>
+      </article>
+
+      <article class="surface-pane">
+        <div>
+          <h3>Mac · Barra de menus</h3>
+          <p>
+            O aplicativo do Mac já traz o binário <code>towerman-cli</code> embutido, instala os hooks do Claude Code, do Codex e do Antigravity automaticamente e previne colisões de edição na mesma worktree Git.
+          </p>
+        </div>
+        <div class="surface-spec">
+          <span>macOS · launchd</span>
+          <span>Regras de Worktree</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <span>Towerman · Controle de agentes de IA para macOS, iOS e watchOS.</span>
+    <span>Relay Status: <a href="/health">/health</a></span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const scenarios = [
+    {
+      agent: "agent-deck-apple · Mac Studio",
+      provider: "AG·IDE",
+      cmd: "go test ./internal/relay ./internal/servico",
+      detailWait: "Bash? go test ./internal/relay",
+      detailRun: "Testes Go aprovados · a correr suite"
+    },
+    {
+      agent: "towerman-core · MacBook Pro",
+      provider: "CLAUDE",
+      cmd: "git push origin main",
+      detailWait: "Bash? git push origin main",
+      detailRun: "Push autorizado · enviando objetos"
+    },
+    {
+      agent: "api-pagamentos · Linux Server",
+      provider: "CODEX",
+      cmd: "alembic upgrade head",
+      detailWait: "Bash? alembic upgrade head",
+      detailRun: "Migração em execução"
+    }
+  ];
+  let idx = 0;
+  let timer = null;
+
+  const btnAllow = document.getElementById("btn-allow");
+  const btnDeny = document.getElementById("btn-deny");
+  const strip = document.getElementById("prompt-strip");
+  const stripAgent = document.getElementById("strip-agent");
+  const stripProvider = document.getElementById("strip-provider");
+  const stripCmd = document.getElementById("strip-cmd");
+  const cntWait = document.getElementById("cnt-wait");
+  const cntRun = document.getElementById("cnt-run");
+  const ledWait = document.getElementById("led-wait");
+  const blipMain = document.getElementById("blip-main");
+  const blipPulse = document.getElementById("blip-pulse");
+  const blipShape = document.getElementById("blip-shape");
+  const rowIcon = document.getElementById("row-icon");
+  const rowDetail = document.getElementById("row-detail");
+  const rowTag = document.getElementById("row-tag");
+
+  function resolvePrompt(approved) {
+    if (timer) clearTimeout(timer);
+    const current = scenarios[idx];
+    cntWait.textContent = "0";
+    cntRun.textContent = approved ? "3" : "2";
+    ledWait.classList.remove("on");
+
+    // Move o ponto do anel interior (52px) para o anel intermédio em curso (92px)
+    blipMain.setAttribute("transform", "translate(150, 58)");
+    blipPulse.style.display = "none";
+    const cor = approved ? "#5bbf8a" : "#6f7f99";
+    blipShape.setAttribute("fill", cor);
+    rowIcon.setAttribute("fill", cor);
+    rowDetail.textContent = approved ? current.detailRun : "Pedido negado pelo utilizador";
+    rowTag.textContent = approved ? "Em curso" : "Parado";
+    rowTag.className = "state-tag " + (approved ? "run" : "idle");
+
+    strip.style.opacity = "0.55";
+    btnAllow.textContent = approved ? "Aprovado remotamente" : "Negado";
+
+    timer = setTimeout(() => {
+      idx = (idx + 1) % scenarios.length;
+      const next = scenarios[idx];
+      stripAgent.textContent = next.agent;
+      stripProvider.textContent = next.provider;
+      stripCmd.textContent = next.cmd;
+      btnAllow.textContent = "Permitir (Toque Duplo)";
+      strip.style.opacity = "1";
+
+      cntWait.textContent = "1";
+      cntRun.textContent = "2";
+      ledWait.classList.add("on");
+      blipMain.setAttribute("transform", "translate(150, 98)");
+      blipPulse.style.display = "";
+      blipShape.setAttribute("fill", "#ffb547");
+      rowIcon.setAttribute("fill", "#ffb547");
+      rowDetail.textContent = next.detailWait;
+      rowTag.textContent = "Espera";
+      rowTag.className = "state-tag wait";
+    }, 2200);
+  }
+
+  btnAllow.addEventListener("click", () => resolvePrompt(true));
+  btnDeny.addEventListener("click", () => resolvePrompt(false));
+
+  document.querySelectorAll(".device-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".device-tab").forEach((t) => t.setAttribute("aria-selected", "false"));
+      tab.setAttribute("aria-selected", "true");
+      const mode = tab.getAttribute("data-mode");
+      btnAllow.textContent = mode === "watch" ? "Permitir (Toque Duplo)" : "Permitir";
+    });
+  });
+
+  const copyBtn = document.getElementById("copy-btn");
+  copyBtn.addEventListener("click", async () => {
+    const cmd = "go install github.com/GeorgeMyller/towerman/cmd/towerman@latest && towerman install && towerman pair";
+    try {
+      await navigator.clipboard.writeText(cmd);
+      copyBtn.textContent = "Copiado!";
+      setTimeout(() => { copyBtn.textContent = "Copiar comando"; }, 2000);
+    } catch (_) {}
+  });
+
+  fetch("/health").then((r) => r.json()).then((d) => {
+    if (d && d.ok) {
+      document.getElementById("relay-text").textContent = "Relay E2EE ativo · X25519 + AES-256-GCM";
+    }
+  }).catch(() => {});
+})();
+</script>
+</body>
+</html>
