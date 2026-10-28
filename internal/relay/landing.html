@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>Towerman — Torre de Controle para Agentes de IA no Mac, iPhone e Apple Watch</title>
-<meta name="description" content="Monitore, aprove permissões e responda ao Claude Code, Codex e Antigravity direto do Mac, do iPhone e do pulso no Apple Watch com criptografia ponta a ponta.">
+<meta name="description" content="Monitore, aprove permissões e responda ao Claude Code, Codex e Antigravity direto do Mac, do iPhone e do pulso no Apple Watch com gestos de arrastar, toque duplo e clique.">
 <style>
 :root {
   --ground: #0b1626;
@@ -108,7 +108,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
-  transition: border-color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
 }
 .btn:hover { border-color: var(--blue); }
 .btn.amber {
@@ -118,20 +118,19 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 }
 .btn.amber:hover { background: #ffc164; border-color: #ffc164; }
 
-/* Estrutura principal */
 .wrap {
   max-width: 1360px;
   margin: 0 auto;
   padding: 0 var(--gutter);
 }
 
-/* Primeira dobra: Proposta + Simulador Interativo da Torre */
+/* Primeira dobra */
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(28px, 4vw, 56px);
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  gap: clamp(28px, 4vw, 52px);
   align-items: start;
-  padding: clamp(36px, 6vw, 76px) 0 clamp(48px, 7vw, 88px);
+  padding: clamp(32px, 5vw, 68px) 0 clamp(44px, 6vw, 80px);
   border-bottom: 1px solid var(--line);
 }
 @media (max-width: 980px) {
@@ -139,7 +138,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 }
 .hero h1 {
   margin: 0 0 18px;
-  font-size: clamp(2.15rem, 4.2vw, 3.65rem);
+  font-size: clamp(2.15rem, 4.1vw, 3.55rem);
   line-height: 1.08;
   letter-spacing: -0.035em;
   text-wrap: balance;
@@ -149,8 +148,8 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   color: var(--amber);
 }
 .lead {
-  margin: 0 0 26px;
-  font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+  margin: 0 0 24px;
+  font-size: clamp(1.02rem, 1.3vw, 1.18rem);
   color: var(--soft);
   max-width: 62ch;
 }
@@ -158,11 +157,10 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 .hero-ctas .btn { min-height: 46px; padding: 10px 20px; font-size: 15px; }
 
-/* Caixa de instalação rápida no terminal */
 .install-box {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -199,7 +197,6 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 }
 .install-cmd span.hl { color: var(--amber); }
 
-/* Legenda das formas dos agentes */
 .shapes-bar {
   display: flex;
   flex-wrap: wrap;
@@ -217,7 +214,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 }
 .shape-item svg { width: 13px; height: 13px; flex: none; }
 
-/* Painel interativo da Torre (Radar + Faixa Âmbar + Quadro de Partidas) */
+/* Simulador interativo com suporte real a Arrastar, Duplo Clique e Clique */
 .console {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -231,7 +228,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
-  padding-bottom: 14px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--line);
 }
 .device-tabs {
@@ -256,10 +253,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   color: var(--text);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
-.leds {
-  display: flex;
-  gap: 8px;
-}
+.leds { display: flex; gap: 8px; }
 .led {
   display: inline-flex;
   align-items: baseline;
@@ -277,14 +271,30 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .led.green.on b { color: var(--green); }
 .led.idle.on b { color: var(--text); }
 
+.gesture-hint-bar {
+  margin-top: 10px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.gesture-hint-bar strong { color: var(--amber); }
+
 .console-body {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 18px;
-  margin-top: 16px;
-  align-items: center;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 14px;
+  align-items: start;
 }
-@media (max-width: 620px) {
+@media (max-width: 640px) {
   .console-body { grid-template-columns: minmax(0, 1fr); }
 }
 .radar-box {
@@ -294,11 +304,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   padding: 10px;
   position: relative;
 }
-.radar-box svg {
-  width: 100%;
-  aspect-ratio: 1;
-  display: block;
-}
+.radar-box svg { width: 100%; aspect-ratio: 1; display: block; }
 .ring { fill: none; stroke: var(--line); stroke-width: 2; }
 .ring.wait { stroke: rgba(255, 181, 71, 0.55); stroke-dasharray: 6 8; }
 .sector { stroke: var(--line); stroke-width: 1.5; }
@@ -316,6 +322,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   from { transform: scale(1); opacity: 0.85; }
   to { transform: scale(2.5); opacity: 0; }
 }
+.radar-blip { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .sweep, .pulse-ring { animation: none; }
 }
@@ -327,13 +334,42 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   min-width: 0;
 }
 
-/* Faixa Âmbar de Pedido (contraste 11:1) */
+/* Contentor de Arrastar (Swipeable) no Simulador */
+.swipe-wrap {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  user-select: none;
+  touch-action: pan-y;
+}
+.swipe-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.swipe-card {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: grab;
+}
+.swipe-card:active { cursor: grabbing; }
+
+/* Faixa Âmbar de Pedido */
 .amber-strip {
   background: var(--amber);
   color: var(--on-amber);
   border-radius: 14px;
   padding: 14px;
-  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
 }
 .strip-top {
   display: flex;
@@ -383,23 +419,34 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 }
 .act-btn:hover { opacity: 0.92; }
 
-/* Quadro de Partidas compacto */
+/* Quadro de Partidas compacto com Clique (expansão) e Arrastar */
 .departures {
   background: var(--ground);
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
 }
+.dep-item {
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.dep-item:last-child { border-bottom: 0; }
 .dep-row {
+  position: relative;
+  z-index: 2;
+  background: var(--ground);
   display: grid;
   grid-template-columns: 16px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border-bottom: 1px solid var(--line);
   font-size: 13.5px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.15s ease;
 }
-.dep-row:last-child { border-bottom: 0; }
+.dep-row:hover { background: var(--raised); }
 .dep-title {
   font-weight: 600;
   white-space: nowrap;
@@ -414,6 +461,32 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.dep-expanded {
+  display: none;
+  padding: 10px 12px 12px;
+  background: var(--raised);
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--text);
+}
+.dep-item.open .dep-expanded { display: block; }
+.quick-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.chip {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.chip:hover { border-color: var(--blue); color: var(--blue); }
+
 .state-tag {
   font-size: 11px;
   font-weight: 700;
@@ -428,7 +501,22 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .state-tag.run { color: var(--green); }
 .state-tag.idle { color: var(--soft); }
 
-/* Seção Arquitetura Zero-Knowledge e Economia de Cota */
+.sim-toast {
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--raised);
+  border: 1px solid var(--blue);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sim-toast[hidden] { display: none !important; }
+
+/* Seções da página */
 .section {
   padding: clamp(44px, 6vw, 80px) 0;
   border-bottom: 1px solid var(--line);
@@ -439,13 +527,97 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   letter-spacing: -0.025em;
 }
 .section-lead {
-  margin: 0 0 36px;
+  margin: 0 0 32px;
   color: var(--soft);
-  max-width: 68ch;
+  max-width: 70ch;
   font-size: 1.05rem;
 }
 
-/* Fluxograma de rota inteligente (Em Casa vs Fora de Casa) */
+/* Tabela / Matriz de Gestos nos 3 Dispositivos */
+.gesture-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 980px) {
+  .gesture-matrix { grid-template-columns: minmax(0, 1fr); }
+}
+.device-gesture-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.device-gesture-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.device-gesture-head h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.device-gesture-head span {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--soft);
+  background: var(--ground);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.gesture-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.gesture-list li {
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.g-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.g-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+}
+.g-pill {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+.g-pill.green { background: rgba(91, 191, 138, 0.16); color: var(--green); border: 1px solid rgba(91, 191, 138, 0.4); }
+.g-pill.red { background: rgba(240, 100, 90, 0.16); color: var(--red); border: 1px solid rgba(240, 100, 90, 0.4); }
+.g-pill.blue { background: rgba(90, 169, 255, 0.16); color: var(--blue); border: 1px solid rgba(90, 169, 255, 0.4); }
+.g-pill.amber { background: var(--amber); color: var(--on-amber); }
+.gesture-list p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--soft);
+  line-height: 1.45;
+}
+
+/* Tabela de Arquitetura e Economia de Cota */
 .route-table {
   width: 100%;
   border-collapse: collapse;
@@ -486,45 +658,6 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   .route-table td { border: 0; padding: 6px 14px; }
 }
 
-/* Demonstração dos 3 ecrãs (Mac, iPhone, Apple Watch) */
-.surfaces {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 0.9fr;
-  gap: 20px;
-  align-items: stretch;
-}
-@media (max-width: 960px) {
-  .surfaces { grid-template-columns: minmax(0, 1fr); }
-}
-.surface-pane {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 16px;
-}
-.surface-pane h3 {
-  margin: 0 0 8px;
-  font-size: 1.25rem;
-}
-.surface-pane p {
-  margin: 0;
-  color: var(--soft);
-  font-size: 15px;
-}
-.surface-spec {
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--soft);
-  font-family: var(--mono);
-}
-
 footer {
   padding: 32px 0 48px;
   color: var(--soft);
@@ -555,8 +688,8 @@ footer {
   </div>
 
   <nav class="nav-actions" aria-label="Atalhos principais">
+    <a class="btn" href="#gestos">Gestos nos 3 Aparelhos</a>
     <a class="btn" href="#arquitetura">Arquitetura E2EE</a>
-    <a class="btn" href="#superficies">Mac · iPhone · Watch</a>
     <a class="btn amber" href="#instalar">Instalar no Mac</a>
   </nav>
 </header>
@@ -564,14 +697,14 @@ footer {
 <div class="wrap">
   <section class="hero">
     <div>
-      <h1>Seus agentes trabalham no Mac. <em>Você aprova do pulso.</em></h1>
+      <h1>Seus agentes trabalham no Mac. <em>Você comanda por gestos.</em></h1>
       <p class="lead">
-        O Towerman transforma sessões do Claude Code, do Codex e do Antigravity numa torre de controle noturna. Veja quem aguarda permissão, responda com toque duplo no Apple Watch e caminhe longe do computador com criptografia ponta a ponta.
+        O Towerman reúne sessões do Claude Code, do Codex e do Antigravity numa torre de controle noturna. Arraste para a direita para aprovar ou focar o terminal, arraste para a esquerda para negar ou mandar resposta rápida e aprove com toque duplo no Apple Watch.
       </p>
 
       <div class="hero-ctas" id="instalar">
-        <a class="btn amber" href="https://github.com/GeorgeMyller/towerman">Baixar para macOS e iOS</a>
-        <a class="btn" href="/health">Verificar JSON do Relay</a>
+        <a class="btn amber" href="https://github.com/GeorgeMyller/towerman">Baixar para macOS, iPhone e Watch</a>
+        <a class="btn" href="#gestos">Ver Mapa de Gestos</a>
       </div>
 
       <div class="install-box">
@@ -599,13 +732,13 @@ footer {
       </div>
     </div>
 
-    <!-- Simulador interativo ao vivo da Torre -->
-    <aside class="console" aria-label="Simulador interativo do Towerman">
+    <!-- Simulador interativo ao vivo com suporte a Arrastar, Duplo Clique e Clique -->
+    <aside class="console" aria-label="Simulador interativo de gestos do Towerman">
       <div class="console-top">
-        <div class="device-tabs" role="tablist" aria-label="Simular ação por dispositivo">
-          <button type="button" class="device-tab" role="tab" aria-selected="true" data-mode="iphone">iPhone</button>
-          <button type="button" class="device-tab" role="tab" aria-selected="false" data-mode="watch">Watch · Toque Duplo</button>
-          <button type="button" class="device-tab" role="tab" aria-selected="false" data-mode="mac">Mac</button>
+        <div class="device-tabs" role="tablist" aria-label="Simular dispositivo">
+          <button type="button" class="device-tab" role="tab" aria-selected="true" data-mode="watch">Apple Watch</button>
+          <button type="button" class="device-tab" role="tab" aria-selected="false" data-mode="iphone">iPhone</button>
+          <button type="button" class="device-tab" role="tab" aria-selected="false" data-mode="mac">Mac Trackpad</button>
         </div>
 
         <div class="leds">
@@ -615,9 +748,13 @@ footer {
         </div>
       </div>
 
+      <div class="gesture-hint-bar" id="gesture-hint">
+        <span>Teste aqui: <strong>Arraste →</strong> (Permitir/Focar) · <strong>Arraste ←</strong> (Negar/Resposta) · <strong>Duplo Clique</strong> (Toque Duplo)</span>
+      </div>
+
       <div class="console-body">
         <div class="radar-box">
-          <svg viewBox="0 0 300 300" role="img" aria-label="Radar de agentes em tempo real">
+          <svg viewBox="0 0 300 300" role="img" aria-label="Radar de agentes clicável">
             <defs>
               <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stop-color="#5aa9ff" stop-opacity="0"/>
@@ -630,77 +767,252 @@ footer {
             <line class="sector" x1="150" y1="22" x2="150" y2="278"/>
             <path class="sweep" d="M150,150 L150,22 A128,128 0 0,1 240,59 Z" fill="url(#sweepGrad)"/>
 
-            <!-- Ponto 1: Agente que pede permissão (muda do anel âmbar para o verde ao aprovar) -->
-            <g id="blip-main" transform="translate(150, 98)">
+            <g id="blip-main" class="radar-blip" transform="translate(150, 98)" data-target="row-0" title="Clique para inspecionar agent-deck-apple">
               <circle class="pulse-ring" id="blip-pulse" cx="0" cy="0" r="8"/>
               <polygon id="blip-shape" points="0,-8 8,0 0,8 -8,0" fill="#ffb547"/>
             </g>
 
-            <!-- Ponto 2: Claude em curso -->
-            <g transform="translate(218, 185)">
+            <g class="radar-blip" transform="translate(218, 185)" data-target="row-1" title="Clique para expandir towerman-core">
               <circle cx="0" cy="0" r="6.5" fill="#5bbf8a"/>
             </g>
 
-            <!-- Ponto 3: Codex em curso -->
-            <g transform="translate(82, 178)">
+            <g class="radar-blip" transform="translate(82, 178)" data-target="row-2" title="Clique para expandir api-pagamentos">
               <rect x="-6" y="-6" width="12" height="12" rx="2.5" fill="#5bbf8a"/>
             </g>
 
-            <!-- Ponto 4: Sessão parada (oco) -->
-            <g transform="translate(112, 54)">
+            <g class="radar-blip" transform="translate(112, 54)" data-target="row-1" title="Sessão parada">
               <circle cx="0" cy="0" r="6" fill="none" stroke="#6f7f99" stroke-width="2"/>
             </g>
           </svg>
         </div>
 
         <div class="live-stack">
-          <div class="amber-strip" id="prompt-strip">
-            <div class="strip-top">
-              <span id="strip-agent">agent-deck-apple · Mac Studio</span>
-              <span class="provider-tag" id="strip-provider">AG·IDE</span>
+          <!-- Faixa Âmbar com suporte a Arrastar (Direita=Permitir, Esquerda=Negar) e Duplo Clique -->
+          <div class="swipe-wrap" id="strip-swipe">
+            <div class="swipe-bg" id="strip-bg">
+              <span id="strip-bg-left">✓ Permitir</span>
+              <span id="strip-bg-right">✕ Negar</span>
             </div>
-            <div class="cmd-box" id="strip-cmd">go test ./internal/relay ./internal/servico</div>
-            <div class="strip-actions">
-              <button type="button" class="act-btn primary" id="btn-allow">Permitir (Toque Duplo)</button>
-              <button type="button" class="act-btn" id="btn-deny">Negar</button>
+            <div class="amber-strip swipe-card" id="prompt-strip" title="Arraste para a direita/esquerda ou dê duplo clique para aprovar">
+              <div class="strip-top">
+                <span id="strip-agent">agent-deck-apple · Mac Studio</span>
+                <span class="provider-tag" id="strip-provider">AG·IDE</span>
+              </div>
+              <div class="cmd-box" id="strip-cmd">go test ./internal/relay ./internal/servico</div>
+              <div class="strip-actions">
+                <button type="button" class="act-btn primary" id="btn-allow">Permitir (Toque Duplo)</button>
+                <button type="button" class="act-btn" id="btn-deny">Negar</button>
+              </div>
             </div>
           </div>
 
-          <div class="departures" aria-label="Quadro de partidas">
-            <div class="dep-row">
-              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                <polygon id="row-icon" points="7,1 13,7 7,13 1,7" fill="#ffb547"/>
-              </svg>
-              <div>
-                <span class="dep-title">agent-deck-apple</span>
-                <span class="dep-sub" id="row-detail">Bash? go test ./internal/relay</span>
+          <div class="sim-toast" id="sim-toast" hidden>
+            <span id="sim-toast-text"></span>
+          </div>
+
+          <!-- Quadro de Partidas: Clique expande conversa; Arrastar -> Foca terminal; Arrastar <- Resposta rápida -->
+          <div class="departures" aria-label="Quadro de partidas com gestos">
+            <div class="dep-item" id="row-0">
+              <div class="swipe-bg" id="row0-bg">
+                <span>⌘ Focar no Mac</span>
+                <span>💬 Resposta rápida</span>
               </div>
-              <span class="state-tag wait" id="row-tag">Espera</span>
+              <div class="dep-row" data-row="row-0">
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                  <polygon id="row-icon" points="7,1 13,7 7,13 1,7" fill="#ffb547"/>
+                </svg>
+                <div>
+                  <span class="dep-title">agent-deck-apple</span>
+                  <span class="dep-sub" id="row-detail">Bash? go test ./internal/relay</span>
+                </div>
+                <span class="state-tag wait" id="row-tag">Espera</span>
+              </div>
+              <div class="dep-expanded">
+                <div><strong>Você pediu:</strong> "Rode a suíte de testes do Relay E2EE."</div>
+                <div class="quick-chips">
+                  <button type="button" class="chip" data-quick="Continua">Continua</button>
+                  <button type="button" class="chip" data-quick="Roda os testes">Roda os testes</button>
+                  <button type="button" class="chip" data-quick="Faz commit">Faz commit</button>
+                </div>
+              </div>
             </div>
-            <div class="dep-row">
-              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                <circle cx="7" cy="7" r="5.5" fill="#5bbf8a"/>
-              </svg>
-              <div>
-                <span class="dep-title">towerman-core</span>
-                <span class="dep-sub">Edit · internal/servico/rede.go</span>
+
+            <div class="dep-item" id="row-1">
+              <div class="swipe-bg" id="row1-bg">
+                <span>⌘ Focar no Mac</span>
+                <span>💬 Resposta rápida</span>
               </div>
-              <span class="state-tag run">Em curso</span>
+              <div class="dep-row" data-row="row-1">
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                  <circle cx="7" cy="7" r="5.5" fill="#5bbf8a"/>
+                </svg>
+                <div>
+                  <span class="dep-title">towerman-core</span>
+                  <span class="dep-sub">Edit · internal/servico/rede.go (Clique ou arraste)</span>
+                </div>
+                <span class="state-tag run">Em curso</span>
+              </div>
+              <div class="dep-expanded">
+                <div><strong>Claude Code respondeu:</strong> "Adicionei a chave X25519 ao QR Code de pareamento."</div>
+                <div class="quick-chips">
+                  <button type="button" class="chip" data-quick="Continua">Continua</button>
+                  <button type="button" class="chip" data-quick="Mostra o diff">Mostra o diff</button>
+                  <button type="button" class="chip" data-quick="Para aqui">Para aqui</button>
+                </div>
+              </div>
             </div>
-            <div class="dep-row">
-              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                <rect x="2" y="2" width="10" height="10" rx="2" fill="#5bbf8a"/>
-              </svg>
-              <div>
-                <span class="dep-title">api-pagamentos</span>
-                <span class="dep-sub">Refatorando migrações SQL</span>
+
+            <div class="dep-item" id="row-2">
+              <div class="swipe-bg" id="row2-bg">
+                <span>⌘ Focar no Mac</span>
+                <span>💬 Resposta rápida</span>
               </div>
-              <span class="state-tag run">Em curso</span>
+              <div class="dep-row" data-row="row-2">
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                  <rect x="2" y="2" width="10" height="10" rx="2" fill="#5bbf8a"/>
+                </svg>
+                <div>
+                  <span class="dep-title">api-pagamentos</span>
+                  <span class="dep-sub">Refatorando migrações SQL (Clique ou arraste)</span>
+                </div>
+                <span class="state-tag run">Em curso</span>
+              </div>
+              <div class="dep-expanded">
+                <div><strong>Codex respondeu:</strong> "Índice criado na tabela de transações sem bloqueio."</div>
+                <div class="quick-chips">
+                  <button type="button" class="chip" data-quick="Excelente, faz push">Excelente, faz push</button>
+                  <button type="button" class="chip" data-quick="Verifica os testes">Verifica os testes</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </aside>
+  </section>
+
+  <!-- Seção dedicada aos Gestos: Arrastar, Duplo Clique e Clique nos 3 Dispositivos -->
+  <section class="section" id="gestos">
+    <h2>Os mesmos gestos no pulso, no bolso e no trackpad</h2>
+    <p class="section-lead">
+      Você não precisa procurar botões pequenos enquanto caminha. O Towerman mapeia <strong>arrastar para a direita</strong>, <strong>arrastar para a esquerda</strong>, <strong>toque duplo / duplo clique</strong> e <strong>clique simples</strong> com o mesmo significado no Apple Watch, no iPhone e no Mac.
+    </p>
+
+    <div class="gesture-matrix">
+      <!-- Apple Watch -->
+      <article class="device-gesture-box">
+        <div class="device-gesture-head">
+          <h3>Apple Watch</h3>
+          <span>Pulso · 1 Mão Livre</span>
+        </div>
+        <ul class="gesture-list">
+          <li>
+            <div class="g-top">
+              <span class="g-name">Toque Duplo (Indicador + Polegar)</span>
+              <span class="g-pill amber">Ação Primária</span>
+            </div>
+            <p>Aprova imediatamente a permissão no topo da tela (ou abre o ditado de voz quando o agente aguarda texto). Role a Digital Crown para escolher qual pedido aprovar.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Arrastar para a Direita (→)</span>
+              <span class="g-pill green">Permitir / Focar</span>
+            </div>
+            <p>Na faixa âmbar de permissão, aprova o comando (<code>Permitir</code>). Nas linhas de partida (limiar de <code>55 pt</code>), traz a janela do terminal para a frente no Mac.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Arrastar para a Esquerda (←)</span>
+              <span class="g-pill red">Negar / Resposta</span>
+            </div>
+            <p>Na faixa âmbar de permissão, recusa o comando (<code>Negar</code>). Em qualquer outra sessão, abre o menu de respostas rápidas e ditado por voz.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Toque Simples (Clique)</span>
+              <span class="g-pill blue">Inspecionar</span>
+            </div>
+            <p>Tocar num ponto do radar ou numa linha de partida abre o detalhe com o que você pediu, a última resposta do agente e o microfone para ditar.</p>
+          </li>
+        </ul>
+      </article>
+
+      <!-- iPhone -->
+      <article class="device-gesture-box">
+        <div class="device-gesture-head">
+          <h3>iPhone</h3>
+          <span>Bolso · 1 Polegar</span>
+        </div>
+        <ul class="gesture-list">
+          <li>
+            <div class="g-top">
+              <span class="g-name">Arrastar para a Direita (→)</span>
+              <span class="g-pill green">Permitir / Focar</span>
+            </div>
+            <p>Em pedidos de permissão com duas opções, deslizar <code>90 pt</code> para a direita sente o feedback tátil e aprova. Nas linhas do quadro de partidas, foca o terminal no computador.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Arrastar para a Esquerda (←)</span>
+              <span class="g-pill red">Negar / Resposta Rápida</span>
+            </div>
+            <p>Em pedidos de permissão, nega a execução sem risco de toque acidental. Nas sessões em curso ou paradas, abre o diálogo de respostas rápidas com um polegar.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Toque na Notificação / Live Activity</span>
+              <span class="g-pill amber">Tela Bloqueada</span>
+            </div>
+            <p>Pressione a notificação Push APNs para aprovar ou negar sem desbloquear o aparelho, ou toque no banner da Dynamic Island para abrir direto na sessão.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Toque Simples no Radar ou Lista</span>
+              <span class="g-pill blue">Detalhe Completo</span>
+            </div>
+            <p>Tocar no ponto geométrico do radar ou na linha da sessão abre o histórico recente da transcrição e o teclado para enfileirar instruções.</p>
+          </li>
+        </ul>
+      </article>
+
+      <!-- Mac -->
+      <article class="device-gesture-box">
+        <div class="device-gesture-head">
+          <h3>Mac (App &amp; Web Deck)</h3>
+          <span>Trackpad 2 Dedos &amp; Rato</span>
+        </div>
+        <ul class="gesture-list">
+          <li>
+            <div class="g-top">
+              <span class="g-name">Arrastar 2 Dedos para a Direita (→)</span>
+              <span class="g-pill green">Permitir / Focar IDE</span>
+            </div>
+            <p>Deslize dois dedos para a direita no trackpad sobre uma faixa âmbar para aprovar, ou sobre qualquer sessão para trazer a janela do Terminal, VS Code ou Antigravity IDE à frente.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Arrastar 2 Dedos para a Esquerda (←)</span>
+              <span class="g-pill red">Negar / Resposta Rápida</span>
+            </div>
+            <p>Deslize dois dedos para a esquerda no trackpad para recusar uma permissão na faixa âmbar ou abrir o menu instantâneo de respostas rápidas.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Duplo Clique / Tecla Return (↵)</span>
+              <span class="g-pill amber">Atalho Padrão</span>
+            </div>
+            <p>Aciona imediatamente a opção principal (<code>Permitir</code>) do pedido ativo e suporta <code>Cmd+Enter</code> / <code>Ctrl+Enter</code> para enviar texto direto à fila da sessão.</p>
+          </li>
+          <li>
+            <div class="g-top">
+              <span class="g-name">Clique Simples no Radar ou Linha</span>
+              <span class="g-pill blue">Expandir Inline</span>
+            </div>
+            <p>Clicar numa sessão do quadro de partidas ou num ponto do radar expande no próprio cartão o diretório Git, a conversa e o campo de resposta.</p>
+          </li>
+        </ul>
+      </article>
+    </div>
   </section>
 
   <section class="section" id="arquitetura">
@@ -741,54 +1053,6 @@ footer {
     </table>
   </section>
 
-  <section class="section" id="superficies">
-    <h2>Três telas desenhadas para não repetir o terminal</h2>
-    <p class="section-lead">
-      No pulso, você decide em dois segundos. No bolso, você lê o resumo e envia respostas rápidas. Na secretária, o aplicativo da barra de menus embute o servidor Go e abre a janela certa do IDE.
-    </p>
-
-    <div class="surfaces">
-      <article class="surface-pane">
-        <div>
-          <h3>Apple Watch · No pulso</h3>
-          <p>
-            A complicação no mostrador e o widget da Smart Stack mostram quantos agentes aguardam você. Quando um agente pede permissão, a faixa âmbar sobe ao topo e o gesto de <strong>toque duplo</strong> aprova a ação primária sem tocar na tela.
-          </p>
-        </div>
-        <div class="surface-spec">
-          <span>watchOS · App Intents</span>
-          <span>Smart Stack + Control Center</span>
-        </div>
-      </article>
-
-      <article class="surface-pane">
-        <div>
-          <h3>iPhone · Em movimento</h3>
-          <p>
-            A Dynamic Island e a Tela Bloqueada acompanham a sessão via Live Activities. Deslize uma linha para a direita para focar o terminal no Mac ou para a esquerda para enviar uma resposta rápida à fila da sessão.
-          </p>
-        </div>
-        <div class="surface-spec">
-          <span>iOS · Live Activities</span>
-          <span>Keychain + CryptoKit</span>
-        </div>
-      </article>
-
-      <article class="surface-pane">
-        <div>
-          <h3>Mac · Barra de menus</h3>
-          <p>
-            O aplicativo do Mac já traz o binário <code>towerman-cli</code> embutido, instala os hooks do Claude Code, do Codex e do Antigravity automaticamente e previne colisões de edição na mesma worktree Git.
-          </p>
-        </div>
-        <div class="surface-spec">
-          <span>macOS · launchd</span>
-          <span>Regras de Worktree</span>
-        </div>
-      </article>
-    </div>
-  </section>
-
   <footer>
     <span>Towerman · Controle de agentes de IA para macOS, iOS e watchOS.</span>
     <span>Relay Status: <a href="/health">/health</a></span>
@@ -822,10 +1086,12 @@ footer {
   ];
   let idx = 0;
   let timer = null;
+  let toastTimer = null;
 
   const btnAllow = document.getElementById("btn-allow");
   const btnDeny = document.getElementById("btn-deny");
   const strip = document.getElementById("prompt-strip");
+  const stripBg = document.getElementById("strip-bg");
   const stripAgent = document.getElementById("strip-agent");
   const stripProvider = document.getElementById("strip-provider");
   const stripCmd = document.getElementById("strip-cmd");
@@ -838,15 +1104,23 @@ footer {
   const rowIcon = document.getElementById("row-icon");
   const rowDetail = document.getElementById("row-detail");
   const rowTag = document.getElementById("row-tag");
+  const simToast = document.getElementById("sim-toast");
+  const simToastText = document.getElementById("sim-toast-text");
 
-  function resolvePrompt(approved) {
+  function showToast(msg) {
+    if (toastTimer) clearTimeout(toastTimer);
+    simToastText.textContent = msg;
+    simToast.hidden = false;
+    toastTimer = setTimeout(() => { simToast.hidden = true; }, 3200);
+  }
+
+  function resolvePrompt(approved, via) {
     if (timer) clearTimeout(timer);
     const current = scenarios[idx];
     cntWait.textContent = "0";
     cntRun.textContent = approved ? "3" : "2";
     ledWait.classList.remove("on");
 
-    // Move o ponto do anel interior (52px) para o anel intermédio em curso (92px)
     blipMain.setAttribute("transform", "translate(150, 58)");
     blipPulse.style.display = "none";
     const cor = approved ? "#5bbf8a" : "#6f7f99";
@@ -857,7 +1131,8 @@ footer {
     rowTag.className = "state-tag " + (approved ? "run" : "idle");
 
     strip.style.opacity = "0.55";
-    btnAllow.textContent = approved ? "Aprovado remotamente" : "Negado";
+    btnAllow.textContent = approved ? "Aprovado (" + via + ")" : "Negado (" + via + ")";
+    showToast((approved ? "✓ Permitido por " : "✕ Negado por ") + via + ": " + current.cmd);
 
     timer = setTimeout(() => {
       idx = (idx + 1) % scenarios.length;
@@ -878,18 +1153,118 @@ footer {
       rowDetail.textContent = next.detailWait;
       rowTag.textContent = "Espera";
       rowTag.className = "state-tag wait";
-    }, 2200);
+    }, 2400);
   }
 
-  btnAllow.addEventListener("click", () => resolvePrompt(true));
-  btnDeny.addEventListener("click", () => resolvePrompt(false));
+  btnAllow.addEventListener("click", (e) => { e.stopPropagation(); resolvePrompt(true, "Clique"); });
+  btnDeny.addEventListener("click", (e) => { e.stopPropagation(); resolvePrompt(false, "Clique"); });
+  strip.addEventListener("dblclick", () => resolvePrompt(true, "Duplo Clique / Toque Duplo"));
+
+  // Suporte interativo de Arrastar (Swipe) na faixa âmbar e nas linhas de partida
+  function attachSwipe(cardEl, bgEl, onRight, onLeft, onClick) {
+    let startX = null;
+    let dx = 0;
+    let moved = false;
+
+    cardEl.addEventListener("pointerdown", (e) => {
+      if (e.target.closest("button")) return;
+      startX = e.clientX;
+      dx = 0;
+      moved = false;
+      cardEl.style.transition = "none";
+      cardEl.setPointerCapture(e.pointerId);
+    });
+
+    cardEl.addEventListener("pointermove", (e) => {
+      if (startX === null) return;
+      dx = e.clientX - startX;
+      if (Math.abs(dx) > 8) moved = true;
+      if (!moved) return;
+      const limit = 85;
+      const eff = Math.abs(dx) > limit ? Math.sign(dx) * (limit + (Math.abs(dx) - limit) * 0.25) : dx;
+      cardEl.style.transform = `translateX(${eff}px)`;
+      if (bgEl) {
+        bgEl.style.opacity = "1";
+        bgEl.style.background = dx > 0 ? bgEl.dataset.rightColor || "#5bbf8a" : bgEl.dataset.leftColor || "#f0645a";
+        bgEl.style.color = dx > 0 ? "#0b1626" : "#ffffff";
+      }
+    });
+
+    function endSwipe() {
+      if (startX === null) return;
+      const finalDx = dx;
+      const wasMoved = moved;
+      startX = null;
+      dx = 0;
+      cardEl.style.transition = "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)";
+      cardEl.style.transform = "translateX(0)";
+      if (bgEl) bgEl.style.opacity = "0";
+      if (wasMoved && finalDx > 65 && onRight) onRight();
+      else if (wasMoved && finalDx < -65 && onLeft) onLeft();
+      else if (!wasMoved && onClick) onClick();
+    }
+
+    cardEl.addEventListener("pointerup", endSwipe);
+    cardEl.addEventListener("pointercancel", endSwipe);
+  }
+
+  stripBg.dataset.rightColor = "#5bbf8a";
+  stripBg.dataset.leftColor = "#f0645a";
+  attachSwipe(
+    strip,
+    stripBg,
+    () => resolvePrompt(true, "Arrastar →"),
+    () => resolvePrompt(false, "Arrastar ←"),
+    null
+  );
+
+  // Gestos nas linhas do Quadro de Partidas (Clique = Expandir; Arrastar Dir = Focar; Arrastar Esq = Resposta rápida)
+  document.querySelectorAll(".dep-item").forEach((item) => {
+    const row = item.querySelector(".dep-row");
+    const bg = item.querySelector(".swipe-bg");
+    const title = item.querySelector(".dep-title").textContent;
+    bg.dataset.rightColor = "#5aa9ff";
+    bg.dataset.leftColor = "#5aa9ff";
+    attachSwipe(
+      row,
+      bg,
+      () => showToast("⌘ Terminal focado no Mac: " + title + " (Arrastar →)"),
+      () => {
+        item.classList.add("open");
+        showToast("💬 Resposta rápida aberta para " + title + " (Arrastar ←)");
+      },
+      () => {
+        item.classList.toggle("open");
+      }
+    );
+  });
+
+  // Clique nos pontos do Radar seleciona e expande a sessão correspondente
+  document.querySelectorAll(".radar-blip").forEach((blip) => {
+    blip.addEventListener("click", () => {
+      const targetId = blip.getAttribute("data-target");
+      const item = document.getElementById(targetId);
+      if (item) {
+        item.classList.add("open");
+        showToast("Ponto selecionado no Radar: " + item.querySelector(".dep-title").textContent);
+      }
+    });
+  });
+
+  // Chips de resposta rápida
+  document.querySelectorAll(".chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const text = chip.getAttribute("data-quick");
+      showToast("Mensagem enviada à fila da sessão: «" + text + "»");
+    });
+  });
 
   document.querySelectorAll(".device-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".device-tab").forEach((t) => t.setAttribute("aria-selected", "false"));
       tab.setAttribute("aria-selected", "true");
       const mode = tab.getAttribute("data-mode");
-      btnAllow.textContent = mode === "watch" ? "Permitir (Toque Duplo)" : "Permitir";
+      btnAllow.textContent = mode === "watch" ? "Permitir (Toque Duplo)" : mode === "mac" ? "Permitir (Return ↵)" : "Permitir";
     });
   });
 
