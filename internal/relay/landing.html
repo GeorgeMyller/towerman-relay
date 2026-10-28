@@ -690,7 +690,7 @@ footer {
   <nav class="nav-actions" aria-label="Atalhos principais">
     <a class="btn" href="#gestos">Gestos nos 3 Aparelhos</a>
     <a class="btn" href="#arquitetura">Arquitetura E2EE</a>
-    <a class="btn amber" href="#instalar">Instalar no Mac</a>
+    <a class="btn amber" href="#gestos">Ver Recursos</a>
   </nav>
 </header>
 
@@ -702,18 +702,13 @@ footer {
         O Towerman reúne sessões do Claude Code, do Codex e do Antigravity numa torre de controle noturna. Arraste para a direita para aprovar ou focar o terminal, arraste para a esquerda para negar ou mandar resposta rápida e aprove com toque duplo no Apple Watch.
       </p>
 
-      <div class="hero-ctas" id="instalar">
-        <a class="btn amber" href="https://github.com/GeorgeMyller/towerman">Baixar para macOS, iPhone e Watch</a>
-        <a class="btn" href="#gestos">Ver Mapa de Gestos</a>
+      <div class="hero-ctas">
+        <a class="btn amber" href="#gestos">Explorar Recursos</a>
+        <a class="btn" href="#arquitetura">Arquitetura E2EE</a>
       </div>
 
-      <div class="install-box">
-        <div class="install-head">
-          <span>Instale os hooks e pareie pelo QR Code no terminal:</span>
-          <button type="button" class="copy-btn" id="copy-btn">Copiar comando</button>
-        </div>
-        <pre class="install-cmd" id="cmd-text">go install github.com/GeorgeMyller/towerman/cmd/towerman@latest
-<span class="hl">towerman install</span> &amp;&amp; <span class="hl">towerman pair</span></pre>
+      <div class="beta-notice" style="margin: 18px 0 24px; padding: 12px 16px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; color: var(--soft);">
+        <strong style="color: var(--amber);">Programa de Testes:</strong> Versão preliminar em validação com testadores convidados na rede local.
       </div>
 
       <div class="shapes-bar" aria-label="Formas e agentes suportados">
@@ -1269,14 +1264,16 @@ footer {
   });
 
   const copyBtn = document.getElementById("copy-btn");
-  copyBtn.addEventListener("click", async () => {
-    const cmd = "go install github.com/GeorgeMyller/towerman/cmd/towerman@latest && towerman install && towerman pair";
-    try {
-      await navigator.clipboard.writeText(cmd);
-      copyBtn.textContent = "Copiado!";
-      setTimeout(() => { copyBtn.textContent = "Copiar comando"; }, 2000);
-    } catch (_) {}
-  });
+  if (copyBtn) {
+    copyBtn.addEventListener("click", async () => {
+      const cmd = "go install github.com/GeorgeMyller/towerman/cmd/towerman@latest && towerman install && towerman pair";
+      try {
+        await navigator.clipboard.writeText(cmd);
+        copyBtn.textContent = "Copiado!";
+        setTimeout(() => { copyBtn.textContent = "Copiar comando"; }, 2000);
+      } catch (_) {}
+    });
+  }
 
   fetch("/health").then((r) => r.json()).then((d) => {
     if (d && d.ok) {
