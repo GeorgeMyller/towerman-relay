@@ -1,6 +1,7 @@
 package relay
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"crypto/ecdsa"
@@ -9,6 +10,7 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -199,4 +201,90 @@ func TestRelayFluxoCompletoEconomiaCota(t *testing.T) {
 	if respAcao.StatusCode != http.StatusNoContent {
 		t.Fatalf("esperava 204 da ação via HTTP, obteve %d", respAcao.StatusCode)
 	}
+}
+
+func TestRelayNaoCriaSalaSemHost(t *testing.T) {
+	srv := NovoServidor(nil)
+	ts := httptest.NewServer(srv.Handler())
+	defer ts.Close()
+
+	resp, err := http.Get(ts.URL + "/s/sala-inexistente/health")
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusServiceUnavailable {
+		t.Fatalf("health sem host devia dar 503, obteve %d", resp.StatusCode)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	if _, err := LigarWS(ctx, ts.URL+"/s/sala-inexistente/ws?role=viewer&device=iphone01", nil); err == nil {
+		t.Fatal("viewer sem host devia ser recusado")
+	}
+
+	corpo, _ := json.Marshal(Mensagem{Device: "iphone01", Payload: "abc"})
+	respAcao, err := http.Post(ts.URL+"/s/sala-inexistente/action", "application/json", bytes.NewReader(corpo))
+	if err != nil {
+		t.Fatal(err)
+	}
+	respAcao.Body.Close()
+	if respAcao.StatusCode != http.StatusServiceUnavailable {
+		t.Fatalf("action sem host devia dar 503, obteve %d", respAcao.StatusCode)
+	}
+
+	if n := numSalas(srv); n != 0 {
+		t.Fatalf("pedidos sem host deixaram %d sala(s) em memória", n)
+	}
+}
+
+func TestLerMensagemLimitaBufferFragmentado(t *testing.T) {
+	a, b := netPipeWS(t)
+	defer a.conn.Close()
+	defer b.conn.Close()
+
+	// Escrita numa goroutine: net.Pipe() não tem buffer e LerMensagem recusa o 2.º frame antes de ler o payload.
+	go func() {
+		pedaco := make([]byte, 2*1024*1024+512*1024)
+		if err := escreverFrameBruto(a, opTexto, false, pedaco); err != nil {
+			return
+		}
+		_ = escreverFrameBruto(a, 0x0, true, pedaco)
+	}()
+
+	_, err := b.LerMensagem()
+	if err == nil || !strings.Contains(err.Error(), "excede") {
+		t.Fatalf("esperava erro de limite de mensagem, obteve %v", err)
+	}
+}
+
+func netPipeWS(t *testing.T) (*ConnWS, *ConnWS) {
+	t.Helper()
+	c1, c2 := net.Pipe()
+	return &ConnWS{conn: c1, r: bufio.NewReader(c1), cliente: true},
+		&ConnWS{conn: c2, r: bufio.NewReader(c2), cliente: false}
+}
+
+func escreverFrameBruto(c *ConnWS, op byte, fin bool, payload []byte) error {
+	var b0 byte = op & 0x0F
+	if fin {
+		b0 |= 0x80
+	}
+	n := len(payload)
+	cab := []byte{b0}
+	switch {
+	case n < 126:
+		cab = append(cab, byte(n))
+	case n <= 65535:
+		cab = append(cab, 126, byte(n>>8), byte(n))
+	default:
+		cab = append(cab, 127,
+			byte(n>>56), byte(n>>48), byte(n>>40), byte(n>>32),
+			byte(n>>24), byte(n>>16), byte(n>>8), byte(n))
+	}
+	if _, err := c.conn.Write(cab); err != nil {
+		return err
+	}
+	_, err := c.conn.Write(payload)
+	return err
 }

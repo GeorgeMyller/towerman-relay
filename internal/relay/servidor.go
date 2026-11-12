@@ -126,6 +126,13 @@ func (s *Servidor) Handler() http.Handler {
 	return mux
 }
 
+func (s *Servidor) salaExistente(id string) (*sala, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sl, ok := s.salas[id]
+	return sl, ok
+}
+
 func (s *Servidor) obterSala(id string) *sala {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -149,10 +156,12 @@ func (s *Servidor) healthSala(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"id inválido"}`, http.StatusBadRequest)
 		return
 	}
-	sl := s.obterSala(id)
-	sl.mu.Lock()
-	online := sl.host != nil
-	sl.mu.Unlock()
+	online := false
+	if sl, ok := s.salaExistente(id); ok {
+		sl.mu.Lock()
+		online = sl.host != nil
+		sl.mu.Unlock()
+	}
 	w.Header().Set("Content-Type", "application/json")
 	if !online {
 		w.WriteHeader(http.StatusServiceUnavailable)
@@ -293,11 +302,22 @@ func (s *Servidor) servirViewer(w http.ResponseWriter, r *http.Request, id strin
 		http.Error(w, `{"error":"device inválido"}`, http.StatusBadRequest)
 		return
 	}
+	sl, ok := s.salaExistente(id)
+	if !ok {
+		http.Error(w, `{"error":"computador desligado"}`, http.StatusServiceUnavailable)
+		return
+	}
+	sl.mu.Lock()
+	hostAtivo := sl.host != nil
+	sl.mu.Unlock()
+	if !hostAtivo {
+		http.Error(w, `{"error":"computador desligado"}`, http.StatusServiceUnavailable)
+		return
+	}
 	ws, err := AceitarWS(w, r)
 	if err != nil {
 		return
 	}
-	sl := s.obterSala(id)
 
 	sl.mu.Lock()
 	if antigo, ok := sl.viewers[deviceID]; ok {
@@ -363,7 +383,11 @@ func (s *Servidor) acaoHTTP(w http.ResponseWriter, r *http.Request) {
 		msg.ReqID = hex.EncodeToString(b)
 	}
 
-	sl := s.obterSala(id)
+	sl, ok := s.salaExistente(id)
+	if !ok {
+		http.Error(w, `{"error":"computador desligado"}`, http.StatusServiceUnavailable)
+		return
+	}
 	ch := make(chan Mensagem, 1)
 
 	sl.mu.Lock()

@@ -194,6 +194,8 @@ func (c *ConnWS) Fechar() error {
 	return c.conn.Close()
 }
 
+const maxMensagemWS = 4 * 1024 * 1024
+
 // LerMensagem lê um frame completo (respondendo automaticamente a Pings).
 func (c *ConnWS) LerMensagem() ([]byte, error) {
 	var msgBuffer []byte
@@ -222,8 +224,11 @@ func (c *ConnWS) LerMensagem() ([]byte, error) {
 			}
 			tam = binary.BigEndian.Uint64(ext)
 		}
-		if tam > 4*1024*1024 {
+		if tam > maxMensagemWS {
 			return nil, errors.New("frame WebSocket excede 4 MB")
+		}
+		if (op == opTexto || op == opBin || op == 0x0) && uint64(len(msgBuffer))+tam > maxMensagemWS {
+			return nil, errors.New("mensagem WebSocket excede 4 MB")
 		}
 		var mascara [4]byte
 		if mascarado {

@@ -658,6 +658,123 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   .route-table td { border: 0; padding: 6px 14px; }
 }
 
+/* Instalar: downloads, passos e documentação */
+.dl-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+@media (max-width: 1100px) { .dl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .dl-grid { grid-template-columns: minmax(0, 1fr); } }
+.dl-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dl-card h3 { margin: 0; font-size: 1.15rem; }
+.dl-card p { margin: 0; color: var(--soft); font-size: 13.5px; line-height: 1.45; flex: 1; }
+.dl-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.dl-links .btn { font-size: 13px; padding: 8px 12px; }
+.dl-meta { font-family: var(--mono); font-size: 12px; color: var(--soft); }
+.steps {
+  list-style: none;
+  counter-reset: passo;
+  margin: 0 0 40px;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+.steps > li {
+  counter-increment: passo;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px 20px 20px 64px;
+  position: relative;
+  min-width: 0;
+}
+.steps > li::before {
+  content: counter(passo);
+  position: absolute;
+  left: 20px;
+  top: 18px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--on-amber);
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+.steps h3 { margin: 2px 0 8px; font-size: 1.1rem; }
+@media (max-width: 640px) {
+  .steps > li { padding: 18px 16px; }
+  .steps > li::before { position: static; margin-bottom: 10px; }
+}
+.steps p { margin: 0 0 10px; color: var(--soft); font-size: 14px; line-height: 1.5; }
+.steps p:last-child { margin-bottom: 0; }
+.cmd {
+  position: relative;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin: 0 0 10px;
+}
+.cmd pre {
+  margin: 0;
+  padding: 12px 84px 12px 14px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text);
+}
+.cmd button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--soft);
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.cmd button:hover { color: var(--text); border-color: var(--blue); }
+.steps code, .doc-list code {
+  background: var(--ground);
+  padding: 1px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+}
+.doc-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 980px) { .doc-list { grid-template-columns: minmax(0, 1fr); } }
+.doc-list a {
+  display: block;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  color: var(--text);
+  text-decoration: none;
+}
+.doc-list a:hover { border-color: var(--blue); }
+.doc-list b { display: block; margin-bottom: 4px; }
+.doc-list span { color: var(--soft); font-size: 13.5px; }
+.sub-h { margin: 0 0 16px; font-size: 1.3rem; }
+
 footer {
   padding: 32px 0 48px;
   color: var(--soft);
@@ -690,7 +807,7 @@ footer {
   <nav class="nav-actions" aria-label="Atalhos principais">
     <a class="btn" href="#gestos">Gestos nos 3 Aparelhos</a>
     <a class="btn" href="#arquitetura">Arquitetura E2EE</a>
-    <a class="btn amber" href="#gestos">Ver Recursos</a>
+    <a class="btn amber" href="#instalar">Baixar e instalar</a>
   </nav>
 </header>
 
@@ -703,7 +820,8 @@ footer {
       </p>
 
       <div class="hero-ctas">
-        <a class="btn amber" href="#gestos">Explorar Recursos</a>
+        <a class="btn amber" href="#instalar">Baixar e instalar</a>
+        <a class="btn" href="#gestos">Explorar Recursos</a>
         <a class="btn" href="#arquitetura">Arquitetura E2EE</a>
       </div>
 
@@ -1010,6 +1128,102 @@ footer {
     </div>
   </section>
 
+  <section class="section" id="instalar">
+    <h2>Baixar e instalar</h2>
+    <p class="section-lead">
+      Código aberto (MIT). Instale o servidor em cada computador onde rodam os seus agentes, compile o app do iPhone com a sua conta Apple e pareie na Wi-Fi de casa. Sem nuvem por padrão: o acesso fora de casa é opcional.
+    </p>
+
+    <div class="dl-grid">
+      <div class="dl-card">
+        <h3>Mac</h3>
+        <p>App da barra de menus com o servidor dentro. Universal (Apple Silicon e Intel), macOS 14 ou mais novo. Não é notarizado: na primeira vez, botão direito › Abrir.</p>
+        <div class="dl-links"><a class="btn amber" data-asset="dmg" href="https://github.com/GeorgeMyller/towerman/releases/latest">Baixar .dmg</a></div>
+      </div>
+      <div class="dl-card">
+        <h3>Linux</h3>
+        <p>Binário único. O <code>install</code> cria o serviço systemd do usuário, os hooks dos agentes e instala o tmux se faltar.</p>
+        <div class="dl-links">
+          <a class="btn" data-asset="linux-amd64" href="https://github.com/GeorgeMyller/towerman/releases/latest">x86-64</a>
+          <a class="btn" data-asset="linux-arm64" href="https://github.com/GeorgeMyller/towerman/releases/latest">ARM64</a>
+        </div>
+      </div>
+      <div class="dl-card">
+        <h3>Windows</h3>
+        <p>Dê um duplo clique: ele se instala, cria a tarefa agendada e mostra o QR. Não é assinado: Mais informações › Executar assim mesmo.</p>
+        <div class="dl-links">
+          <a class="btn" data-asset="windows-amd64" href="https://github.com/GeorgeMyller/towerman/releases/latest">x64</a>
+          <a class="btn" data-asset="windows-arm64" href="https://github.com/GeorgeMyller/towerman/releases/latest">ARM64</a>
+        </div>
+      </div>
+      <div class="dl-card">
+        <h3>iPhone e Apple Watch</h3>
+        <p>Sem App Store: compile com a sua conta Apple (a gratuita serve). iOS 18 e watchOS 26. O app do relógio vai junto.</p>
+        <div class="dl-links"><a class="btn" href="https://github.com/GeorgeMyller/towerman/blob/main/docs/pt-BR/assinatura-apple.md">Guia de compilação</a></div>
+      </div>
+    </div>
+    <p class="dl-meta" id="dl-meta">Todas as versões e o <code>SHA256SUMS</code> em <a href="https://github.com/GeorgeMyller/towerman/releases">GitHub Releases</a>.</p>
+
+    <h3 class="sub-h">Instalação em 4 passos</h3>
+    <ol class="steps">
+      <li>
+        <h3>Servidor em cada computador</h3>
+        <p>No Mac, abra o <code>.dmg</code> e arraste o Towerman para Aplicativos. No Linux e no Windows, use o binário acima ou o Go 1.26:</p>
+        <div class="cmd"><pre>go install github.com/GeorgeMyller/towerman/cmd/towerman@latest
+towerman install --sem-extensao</pre><button type="button" data-copy>Copiar</button></div>
+        <p>No Codex, abra <code>/hooks</code> uma vez e confie nos hooks do <code>towerman</code>.</p>
+      </li>
+      <li>
+        <h3>App do iPhone e do relógio</h3>
+        <p>Com o Xcode 26 e <code>brew install xcodegen go</code>, defina a sua equipe e o seu prefixo de IDs num arquivo local:</p>
+        <div class="cmd"><pre>git clone https://github.com/GeorgeMyller/towerman && cd towerman/apple
+cp Config/Local.xcconfig.example Config/Local.xcconfig
+# edite TOWERMAN_TEAM_ID e TOWERMAN_ID_PREFIX
+xcodegen generate && open Towerman.xcodeproj</pre><button type="button" data-copy>Copiar</button></div>
+        <p>Escolha o esquema <code>Towerman</code> e o seu iPhone, e clique em Run. Com a conta gratuita, <code>tools/renovar-assinatura.sh instalar</code> renova o app a cada semana.</p>
+      </li>
+      <li>
+        <h3>Parear na Wi-Fi de casa</h3>
+        <div class="cmd"><pre>towerman pair</pre><button type="button" data-copy>Copiar</button></div>
+        <p>Leia o QR com a câmera do iPhone e toque em «Abrir no Towerman». Repita em cada computador: o radar junta todos.</p>
+      </li>
+      <li>
+        <h3>Fora de casa (opcional)</h3>
+        <p>O Towerman não traz servidor público. Escolha um caminho: <b>Tailscale</b> (sem servidor, recomendado), o seu <b>relay próprio</b> com token (<a href="https://github.com/GeorgeMyller/towerman-relay">um clique no Render</a> ou Docker) ou o túnel rápido da Cloudflare.</p>
+        <div class="cmd"><pre>{ "relay_url": "https://&lt;seu-relay&gt;", "relay_token": "&lt;token&gt;" }</pre><button type="button" data-copy>Copiar</button></div>
+        <p>Guarde em <code>~/.claude/towerman/config.json</code> e pareie de novo em casa.</p>
+      </li>
+    </ol>
+
+    <h3 class="sub-h">Primeiro uso</h3>
+    <ol class="steps">
+      <li>
+        <h3>Trabalhe como sempre</h3>
+        <p>Abra o Claude Code, o Codex ou o Antigravity. Cada sessão aparece no radar com o estado e o pedido. No Linux, rode os agentes dentro do tmux (<code>tmux new -s trabalho</code>) para poder escrever neles pelo iPhone.</p>
+      </li>
+      <li>
+        <h3>Decida de onde estiver</h3>
+        <p>Permita, negue ou escolha a opção de uma pergunta no relógio, no iPhone ou na barra de menus do Mac, com os gestos acima. «Focar» traz o terminal da sessão para a frente.</p>
+      </li>
+      <li>
+        <h3>No terminal</h3>
+        <div class="cmd"><pre>towerman deck        # deck web neste computador
+towerman ls          # sessões vivas por repo e worktree
+towerman aparelhos   # aparelhos pareados (revogar &lt;nome&gt;)</pre><button type="button" data-copy>Copiar</button></div>
+      </li>
+    </ol>
+
+    <h3 class="sub-h">Documentação</h3>
+    <div class="doc-list">
+      <a href="https://github.com/GeorgeMyller/towerman/blob/main/docs/pt-BR/instalar.md"><b>Instalar</b><span>Mac, Linux, Windows, pareamento e problemas comuns. <code>pt-BR</code></span></a>
+      <a href="https://github.com/GeorgeMyller/towerman/blob/main/docs/pt-BR/acesso-remoto.md"><b>Acesso fora de casa</b><span>Tailscale, relay próprio com token, push e Cloudflare. <code>pt-BR</code></span></a>
+      <a href="https://github.com/GeorgeMyller/towerman/blob/main/docs/pt-BR/assinatura-apple.md"><b>Apps Apple</b><span>Compilar com a sua conta e renovação semanal. <code>pt-BR</code></span></a>
+      <a href="https://github.com/GeorgeMyller/towerman/blob/main/docs/en/install.md"><b>Install</b><span>The same guides in English. <code>EN</code></span></a>
+      <a href="https://github.com/GeorgeMyller/towerman#readme"><b>README</b><span>O que o Towerman faz com cada agente, comandos e configuração.</span></a>
+      <a href="https://github.com/GeorgeMyller/towerman-relay#readme"><b>Relay</b><span>Publicar o relay no Render ou com Docker. <code>EN</code> <code>pt-BR</code></span></a>
+    </div>
+  </section>
+
   <section class="section" id="arquitetura">
     <h2>Relay Zero-Knowledge com economia de 20x na bateria e na nuvem</h2>
     <p class="section-lead">
@@ -1051,7 +1265,7 @@ footer {
 
   <footer>
     <span>Towerman · Controle de agentes de IA para macOS, iOS e watchOS.</span>
-    <span>Relay Status: <a href="/health">/health</a></span>
+    <span><a href="https://github.com/GeorgeMyller/towerman">Código no GitHub</a> · Licença MIT · Relay Status: <a href="/health">/health</a></span>
   </footer>
 </div>
 
@@ -1264,17 +1478,40 @@ footer {
     });
   });
 
-  const copyBtn = document.getElementById("copy-btn");
-  if (copyBtn) {
-    copyBtn.addEventListener("click", async () => {
-      const cmd = "go install github.com/GeorgeMyller/towerman/cmd/towerman@latest && towerman install && towerman pair";
+  // Botões «Copiar» dos blocos de comando.
+  document.querySelectorAll(".cmd [data-copy]").forEach((b) => {
+    b.addEventListener("click", async () => {
+      const texto = b.parentElement.querySelector("pre").textContent;
       try {
-        await navigator.clipboard.writeText(cmd);
-        copyBtn.textContent = "Copiado!";
-        setTimeout(() => { copyBtn.textContent = "Copiar comando"; }, 2000);
+        await navigator.clipboard.writeText(texto);
+        b.textContent = "Copiado";
+        setTimeout(() => { b.textContent = "Copiar"; }, 1800);
       } catch (_) {}
     });
-  }
+  });
+
+  // Links diretos para os ficheiros da última release; sem resposta, ficam na página de Releases.
+  fetch("https://api.github.com/repos/GeorgeMyller/towerman/releases/latest")
+    .then((r) => (r.ok ? r.json() : Promise.reject()))
+    .then((rel) => {
+      const padroes = {
+        "dmg": /^Towerman-.*\.dmg$/,
+        "linux-amd64": /-linux-amd64$/,
+        "linux-arm64": /-linux-arm64$/,
+        "windows-amd64": /-windows-amd64\.exe$/,
+        "windows-arm64": /-windows-arm64\.exe$/
+      };
+      document.querySelectorAll("[data-asset]").forEach((a) => {
+        const p = padroes[a.dataset.asset];
+        const f = p && (rel.assets || []).find((x) => p.test(x.name));
+        if (f) { a.href = f.browser_download_url; a.title = f.name; }
+      });
+      const meta = document.getElementById("dl-meta");
+      if (meta && rel.tag_name) {
+        meta.insertAdjacentText("afterbegin", "Versão " + rel.tag_name + " · ");
+      }
+    })
+    .catch(() => {});
 
   fetch("/health").then((r) => r.json()).then((d) => {
     if (d && d.ok) {
