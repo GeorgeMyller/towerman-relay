@@ -70,6 +70,7 @@ code, pre { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   letter-spacing: -0.02em;
 }
 .brand svg { width: 24px; height: 24px; flex: none; }
+.relay-pill[hidden] { display: none !important; }
 .relay-pill {
   display: inline-flex;
   align-items: center;
@@ -799,7 +800,7 @@ footer {
     <span>Towerman</span>
   </a>
 
-  <div class="relay-pill" id="relay-status" aria-live="polite">
+  <div class="relay-pill" id="relay-status" aria-live="polite" hidden>
     <span class="relay-dot" id="relay-dot"></span>
     <span id="relay-text">Relay E2EE online · X25519 + AES-256-GCM</span>
   </div>
@@ -826,7 +827,7 @@ footer {
       </div>
 
       <div class="beta-notice" style="margin: 18px 0 24px; padding: 12px 16px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; color: var(--soft);">
-        <strong style="color: var(--amber);">Programa de Testes:</strong> Versão preliminar em validação com testadores convidados na rede local.
+        <strong style="color: var(--amber);">Código aberto (MIT):</strong> Towerman 2.0 para Mac, Linux, Windows, iPhone e Apple Watch. <a href="#instalar">Baixar e instalar</a> · <a href="https://github.com/GeorgeMyller/towerman">GitHub</a>
       </div>
 
       <div class="shapes-bar" aria-label="Formas e agentes suportados">
@@ -1514,8 +1515,10 @@ towerman aparelhos   # aparelhos pareados (revogar &lt;nome&gt;)</pre><button ty
     .catch(() => {});
 
   fetch("/health").then((r) => r.json()).then((d) => {
+    // Só num relay a correr: na página estática (GitHub Pages) o selo fica escondido.
     if (d && d.ok) {
       document.getElementById("relay-text").textContent = "Relay E2EE ativo · X25519 + AES-256-GCM";
+      document.getElementById("relay-status").hidden = false;
     }
   }).catch(() => {});
 })();
