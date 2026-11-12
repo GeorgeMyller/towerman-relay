@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: towerman-relay
+    runtime: go
+    plan: free
+    buildCommand: go build -trimpath -ldflags="-s -w" -o ./bin/towerman-relay ./cmd/towerman-relay
+    startCommand: ./bin/towerman-relay
+    healthCheckPath: /health
+    envVars:
+      - key: TOWERMAN_RELAY_TOKENS
+        sync: false
+      - key: APNS_TOPIC
+        sync: false
+      - key: APNS_TEAM_ID
+        sync: false
+      - key: APNS_KEY_ID
+        sync: false
+      - key: APNS_KEY_P8
+        sync: false
